@@ -1,21 +1,50 @@
-on: 
+name: 🚀 Deploy Entire Stack
+on:
   push:
     branches:
       - main
-name: 🚀 Deploy website to cPanel on push
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy website
+  deploy:
+    name: 🎉 Deploy Applications
     runs-on: ubuntu-latest
     steps:
-    # Checkout the repository
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
-    # sync files via FTP
-    - name: 📂 Sync files via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USER }}
-        password: ${{ secrets.FTP_PASS }}
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      # Set up Node.js for client build
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Install and build client
+      - name: 📦 Install client dependencies
+        run: cd client && npm install
+
+      - name: 🏗️ Build client
+        run: cd client && npm run build
+
+      # Deploy API to api subdomain
+      - name: 📂 Deploy API
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_BACK_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./api/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/vendor/**
+            **/.env
+
+      # Deploy client build to main domain
+      - name: 📂 Deploy Client
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_CLIENT_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          local-dir: ./client/build/
