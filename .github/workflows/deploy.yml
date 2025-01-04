@@ -22,6 +22,9 @@ jobs:
       - name: 📦 Install client dependencies
         run: cd client && npm install
 
+      - name: 🔨 Setup environment variables
+        run: cd client && cp .env.production .env
+
       - name: 🏗️ Build client
         run: cd client && npm run build
 
