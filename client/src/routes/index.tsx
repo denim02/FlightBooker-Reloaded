@@ -1,4 +1,4 @@
-import api from '@/utils/api'
+import api from '@/lib/api'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({

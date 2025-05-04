@@ -11,10 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class RouteService
 {
-    public function __construct()
-    {
-    }
-
     public function createRoute(array $routeData)
     {
         return DB::transaction(function () use ($routeData) {

@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
                 'name' => 'Deni',
                 'email' => 'denimastori02@gmail.com',
                 'password' => bcrypt('secret123'),
+                'phone_number' => '+355682361513'
             ]);
             $baseUser->assignRole('base_user');
 

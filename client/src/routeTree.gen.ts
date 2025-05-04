@@ -14,6 +14,10 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as authSignupImport } from './routes/(auth)/signup'
+import { Route as authLogoutImport } from './routes/(auth)/logout'
+import { Route as authLoginImport } from './routes/(auth)/login'
+import { Route as authLoginConfirmEmailImport } from './routes/(auth)/login.confirm-email'
 
 // Create Virtual Routes
 
@@ -31,6 +35,30 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const authSignupRoute = authSignupImport.update({
+  id: '/(auth)/signup',
+  path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authLogoutRoute = authLogoutImport.update({
+  id: '/(auth)/logout',
+  path: '/logout',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authLoginRoute = authLoginImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const authLoginConfirmEmailRoute = authLoginConfirmEmailImport.update({
+  id: '/confirm-email',
+  path: '/confirm-email',
+  getParentRoute: () => authLoginRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -51,44 +79,115 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/logout': {
+      id: '/(auth)/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof authLogoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/signup': {
+      id: '/(auth)/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof authSignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/(auth)/login/confirm-email': {
+      id: '/(auth)/login/confirm-email'
+      path: '/confirm-email'
+      fullPath: '/login/confirm-email'
+      preLoaderRoute: typeof authLoginConfirmEmailImport
+      parentRoute: typeof authLoginImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface authLoginRouteChildren {
+  authLoginConfirmEmailRoute: typeof authLoginConfirmEmailRoute
+}
+
+const authLoginRouteChildren: authLoginRouteChildren = {
+  authLoginConfirmEmailRoute: authLoginConfirmEmailRoute,
+}
+
+const authLoginRouteWithChildren = authLoginRoute._addFileChildren(
+  authLoginRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutLazyRoute
+  '/login': typeof authLoginRouteWithChildren
+  '/logout': typeof authLogoutRoute
+  '/signup': typeof authSignupRoute
+  '/login/confirm-email': typeof authLoginConfirmEmailRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutLazyRoute
+  '/login': typeof authLoginRouteWithChildren
+  '/logout': typeof authLogoutRoute
+  '/signup': typeof authSignupRoute
+  '/login/confirm-email': typeof authLoginConfirmEmailRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/about': typeof AboutLazyRoute
+  '/(auth)/login': typeof authLoginRouteWithChildren
+  '/(auth)/logout': typeof authLogoutRoute
+  '/(auth)/signup': typeof authSignupRoute
+  '/(auth)/login/confirm-email': typeof authLoginConfirmEmailRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/login'
+    | '/logout'
+    | '/signup'
+    | '/login/confirm-email'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/about' | '/login' | '/logout' | '/signup' | '/login/confirm-email'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/(auth)/login'
+    | '/(auth)/logout'
+    | '/(auth)/signup'
+    | '/(auth)/login/confirm-email'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutLazyRoute: typeof AboutLazyRoute
+  authLoginRoute: typeof authLoginRouteWithChildren
+  authLogoutRoute: typeof authLogoutRoute
+  authSignupRoute: typeof authSignupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutLazyRoute: AboutLazyRoute,
+  authLoginRoute: authLoginRouteWithChildren,
+  authLogoutRoute: authLogoutRoute,
+  authSignupRoute: authSignupRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +201,10 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/(auth)/login",
+        "/(auth)/logout",
+        "/(auth)/signup"
       ]
     },
     "/": {
@@ -110,6 +212,22 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about.lazy.tsx"
+    },
+    "/(auth)/login": {
+      "filePath": "(auth)/login.tsx",
+      "children": [
+        "/(auth)/login/confirm-email"
+      ]
+    },
+    "/(auth)/logout": {
+      "filePath": "(auth)/logout.tsx"
+    },
+    "/(auth)/signup": {
+      "filePath": "(auth)/signup.tsx"
+    },
+    "/(auth)/login/confirm-email": {
+      "filePath": "(auth)/login.confirm-email.tsx",
+      "parent": "/(auth)/login"
     }
   }
 }

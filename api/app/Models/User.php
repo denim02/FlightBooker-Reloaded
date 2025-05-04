@@ -16,6 +16,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone_number',
         'password',
     ];
 
@@ -32,20 +33,11 @@ class User extends Authenticatable
         ];
     }
 
-    protected $appends = ['role', 'permissions'];
+    protected $appends = ['role'];
 
     public function getRoleAttribute()
     {
         return count($this->roles) > 0 ? $this->roles[0] : null;
-    }
-
-    public function getPermissionsAttribute()
-    {
-        if ($this->is_admin) {
-            return Permission::all()->pluck('name');
-        }
-
-        return $this->getAllPermissions()->pluck('name');
     }
 
     public function airline()
